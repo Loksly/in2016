@@ -32,10 +32,12 @@
 	}
 
 	function createDDLFiles(config, directory){
-		let createFilename = path.join(directory, config.ddlfiles.create);
-		let alterFilename = path.join(directory, config.ddlfiles.alter);
-		fs.writeFileSync(createFilename, generateCreateTable(config), 'utf8');
-		fs.writeFileSync(alterFilename, generateAlterTable(config), 'utf8');
+		if (typeof config.ddlfiles === 'object'){
+			let createFilename = path.join(directory, config.ddlfiles.create);
+			let alterFilename = path.join(directory, config.ddlfiles.alter);
+			fs.writeFileSync(createFilename, generateCreateTable(config), 'utf8');
+			fs.writeFileSync(alterFilename, generateAlterTable(config), 'utf8');
+		}
 	}
 
 	function createDMLFiles(config, directory){
@@ -60,19 +62,29 @@
 	}
 
 	function generateSelectCount(config){
-		return 'select count(*) from `' + config.name + '`;';
+		return 'select count(*) from `' + config.tablename + '`;';
 	}
 
-	function generateSelectCount(config){
-		return 'select count(*) from `' + config.name + '` where ;';
+	function generateWhere(field){
+		if (field.type === 'INT'){
+			let min = (typeof field.min === 'number') ? field.min : -Number.MAX_SAFE_INTEGER;
+			let max = (typeof field.max === 'number') ? field.min : Number.MAX_SAFE_INTEGER;
+			return field.name + '=' + randomIntInc(min, max);
+		}
+		return '';
+	}
+
+	function generateSelectCountWhere(config){
+		let fields = config.fields.filter(function(f){ return config.partition.fields.indexOf(f.name) >= 0; });
+		return 'select count(*) from `' + config.tablename + '` where ' + fields.map(generateWhere).join(' and ') + ';';
 	}
 	function generateQueries(config){
-		return generateSelectCount(config) + "\n";
+		return generateSelectCount(config) + "\n" + generateSelectCountWhere(config) + "\n";
 	}
 
 	function createDQLFiles(config, directory){
 		let queryFilename = path.join(directory, config.dqlfiles.query);
-	 	fs.writeFileSync(queryFilename, generateQueries(config) ,'utf8');
+		fs.writeFileSync(queryFilename, generateQueries(config), 'utf8');
 	}
 
 	function recreateFolder(foldername, cb){
@@ -128,7 +140,7 @@
 			} else {
 				createDDLFiles(config, outputdir);
 				createDMLFiles(config, outputdir);
-
+				createDQLFiles(config, outputdir);
 			}
 		});
 
