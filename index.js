@@ -61,8 +61,8 @@
 		gzip.end();
 	}
 
-	function generateSelectCount(config){
-		return 'select count(*) from `' + config.tablename + '`;';
+	function generateSelect(config, count){
+		return 'select ' + (count ? 'count(*)' : '*') + ' from `' + config.tablename + '`;';
 	}
 
 	function generateWhere(field){
@@ -74,12 +74,12 @@
 		return '';
 	}
 
-	function generateSelectCountWhere(config){
+	function generateSelectWhere(config, count){
 		let fields = config.fields.filter(function(f){ return config.partition.fields.indexOf(f.name) >= 0; });
-		return 'select count(*) from `' + config.tablename + '` where ' + fields.map(generateWhere).join(' and ') + ';';
+		return 'select ' + (count ? 'count(*)' : '*') + ' from `' + config.tablename + '` where ' + fields.map(generateWhere).join(' and ') + ';';
 	}
 	function generateQueries(config){
-		return generateSelectCount(config) + "\n" + generateSelectCountWhere(config) + "\n";
+		return generateSelect(config, true) + "\n" + generateSelectWhere(config, true) + "\n" + generateSelect(config, false) + "\n" + generateSelectWhere(config, false) + "\n";
 	}
 
 	function createDQLFiles(config, directory){

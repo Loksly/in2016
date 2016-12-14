@@ -42,28 +42,14 @@ Sections:
 	* Test the partition plugin is available
 	* Stopping the container and releasing memory
 * [Generate random data](generator.md)
+	* Deploy the code
+	* Dependencies
+	* Check nodejs is accesible
+	* Check the config file
+	* Run the code
+* [Run the test](test.md)
+	* Load the data
+	* Check partition status
+	* Benchmark
+	* The results
 
-
-
-
-$ mysql -h $IP --default-character-set=utf8 -proot test < data.example.sql
-
-## Test
-### Create the sql files with random data
-
-
-
-MySQL 5.6 supports explicit partition selection for queries, so for example,
-
-```mysql
-SELECT * FROM test PARTITION (p2010, p2011) WHERE strfield = 'Lorem ipsum';
-```
-selects only those rows in partitions p2010 and p2011 that match the WHERE condition, this can greatly speed up queries.
-
-
-
-Check partition status:
-
-```mysql
-SELECT PARTITION_NAME, TABLE_ROWS FROM INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_NAME = 'test';
-```

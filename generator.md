@@ -17,9 +17,9 @@ $ node --version
 v6.9.2
 ```
 
-### Check the config file.
+### Check the config file
 
-You may read and modify the _config.cfg_ file. Two examples are available on repository,
+You may read and modify the _config.json_ file. Two examples are available on repository,
 both with 30 fields and each one with different kinds of partitions.
 
 ### Run the code

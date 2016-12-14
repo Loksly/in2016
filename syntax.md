@@ -3,7 +3,8 @@
 
 You may use this syntax to use partitions:
 
-```mysql like
+```mysqllike
+
 CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] [partition_options]
 
 partition_options :
@@ -20,6 +21,7 @@ PARTITION BY
 	  [SUBPARTITIONS num]
 	]
 	[(partition_definition [, partition_definition] ...)
+
 partition_definition :
 
  PARTITION partition_name
@@ -36,6 +38,7 @@ partition_definition :
 		[TABLESPACE [=] tablespace_name]
 		[NODEGROUP [=] node_group_id]
 		[(subpartition_definition [, subpartition_definition] ...)]
+
 subpartition_definition :
 
 		SUBPARTITION logical_name
