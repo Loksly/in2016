@@ -1,0 +1,53 @@
+{
+	"tablename": "test",
+	"fields": [
+		{"name": "id", "type": "int(11)", "null": false, "extra": "auto_increment"},
+		{"name": "strfield01", "type": "CHAR(100)", "null": false },
+		{"name": "strfield02", "type": "CHAR(100)", "null": false },
+		{"name": "strfield03", "type": "CHAR(100)", "null": false },
+		{"name": "strfield04", "type": "CHAR(100)", "null": false },
+		{"name": "strfield05", "type": "CHAR(100)", "null": false },
+		{"name": "strfield06", "type": "CHAR(100)", "null": false },
+		{"name": "strfield07", "type": "CHAR(100)", "null": false },
+		{"name": "strfield08", "type": "CHAR(100)", "null": false },
+		{"name": "strfield09", "type": "CHAR(100)", "null": false },
+		{"name": "strfield10", "type": "CHAR(100)", "null": false },
+		{"name": "strfield11", "type": "CHAR(100)", "null": false },
+		{"name": "strfield12", "type": "CHAR(100)", "null": false },
+		{"name": "strfield13", "type": "CHAR(100)", "null": false },
+		{"name": "strfield14", "type": "CHAR(100)", "null": false },
+		{"name": "strfield15", "type": "CHAR(100)", "null": false },
+		{"name": "floatfield01", "type": "FLOAT", "null": false },
+		{"name": "floatfield02", "type": "FLOAT", "null": false },
+		{"name": "floatfield03", "type": "FLOAT", "null": false },
+		{"name": "floatfield04", "type": "FLOAT", "null": false },
+		{"name": "floatfield05", "type": "FLOAT", "null": false },
+		{"name": "floatfield06", "type": "FLOAT", "null": false },
+		{"name": "floatfield07", "type": "FLOAT", "null": false },
+		{"name": "floatfield08", "type": "FLOAT", "null": false },
+		{"name": "floatfield09", "type": "FLOAT", "null": false },
+		{"name": "floatfield10", "type": "FLOAT", "null": false },
+		{"name": "floatfield11", "type": "FLOAT", "null": false },
+		{"name": "floatfield12", "type": "FLOAT", "null": false },
+		{"name": "floatfield13", "type": "FLOAT", "null": false },
+		{"name": "year", "type": "INT", "null": false, "min": 2000, "max": 2009 }
+	],
+	"primarykeys": ["id"],
+	"partition": {
+		"type": "RANGE",
+		"fields": ["year"],
+		"extraparameters":
+			"PARTITION p2000 VALUES LESS THAN (2001), PARTITION p2001 VALUES LESS THAN (2002), PARTITION p2002 VALUES LESS THAN (2003), PARTITION p2003 VALUES LESS THAN (2004), PARTITION p2004 VALUES LESS THAN (2005), PARTITION p2005 VALUES LESS THAN (2006), PARTITION p2006 VALUES LESS THAN (2007), PARTITION p2007 VALUES LESS THAN (2008), PARTITION p2008 VALUES LESS THAN (2009), PARTITION p2009 VALUES LESS THAN MAXVALUE"
+	},
+	"inserts": 100000,
+	"ddlfiles": {
+		"create": "create.sql",
+		"alter": "alter.sql"
+	},
+	"dmlfiles": {
+		"insert": "insert.sql.gz"
+	},
+	"dqlfiles": {
+		"query": "query.sql"
+	}
+}

@@ -34,8 +34,8 @@ When we are talking about databases, _horizontal partitioning_ is a technique th
 distributes portions of individual tables using different logical volumes,
 files or nodes according to some rules. 
 _Horizontal partitioning_ is different to _vertical partitioning_ in the way it splits the data.
-In _horizontal partitioning_ different rows can be stored on different files.
-In _vertical partitioning_ different fields of the same row can be stored on different files.
+In _horizontal partitioning_ different rows can be stored on different volumes.
+In _vertical partitioning_ different fields of the same row can be stored on different volumes.
 
 Mysql partitioning is a kind of horizontal partitioning that breaks the data accross different files on the same logical server.
 Note that breaking the data accross different nodes of the same cluster is a completely different concept named
@@ -77,7 +77,7 @@ PARTITION BY LIST COLUMNS (fieldname) (
 )
 ```
 * [HASH partitioning](https://dev.mysql.com/doc/refman/5.7/en/partitioning-hash.html):
-when you use a expression based on one or more attributes of the row and the number of buckets.
+when you use a expression based on one or more attributes and the number of buckets available.
 For example,
 ```mysql
 PARTITION BY HASH( YEAR(fieldname) )
@@ -85,13 +85,16 @@ PARTITION BY HASH( YEAR(fieldname) )
 ```
 
 * [KEY partitioning](https://dev.mysql.com/doc/refman/5.7/en/partitioning-key.html):
-when you choose the attribute or attributes used for partitioning without a function but rely on mysql.
+when you choose the attribute or attributes used for partitioning without a function.
 ```mysql
 PARTITION BY KEY(fieldname)
 	PARTITIONS 10;
 ```
 
-Check the restrictions when choosing an expression [here](https://dev.mysql.com/doc/refman/5.7/en/partitioning-limitations.html).
+There are some restrictions when choosing an expression, check them
+[here](https://dev.mysql.com/doc/refman/5.7/en/partitioning-limitations.html), and you may
+also be interested in the ways it handles _NULL_ values, explained 
+[here](https://dev.mysql.com/doc/refman/5.7/en/partitioning-handling-nulls.html).
 
 
 ## Ways to define partitions
