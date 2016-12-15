@@ -3,14 +3,14 @@
 
 First set IP bash variable by this:
 ```bash
-$ docker inspect some-mysql | grep IPAddress # use the ouput of this command on the next command as $IP variable
+$ IP=`sudo docker inspect some-mysql | grep IPAddress | cut -f 4 -d "\"" ` # use the ouput of this command on the next command as $IP variable
 ```
 
 Then recreate first the structure, then the partition format, then the data.
 ```bash
-$ mysql -h $IP --default-character-set=utf8 -proot test < output/create.sql
-$ mysql -h $IP --default-character-set=utf8 -proot test < output/alter.sql
-$ gunzip < output/insert.sql.gz | mysql -h $IP --default-character-set=utf8 -proot test
+$ mysql -h $IP -u root --default-character-set=utf8 -proot test < output/create.sql
+$ mysql -h $IP -u root --default-character-set=utf8 -proot test < output/alter.sql
+$ gunzip < output/insert.sql.gz | mysql -h $IP -u root --default-character-set=utf8 -proot test
 ```
 
 

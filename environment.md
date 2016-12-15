@@ -18,8 +18,9 @@ By unkown reasons in my tests the port is not right exported,
 then we must get the IP Address of the docker and assign it to _IP_ bash variable.
 
 ```bash
-$ docker inspect some-mysql | grep IPAddress # use the ouput of this command on the next command as $IP variable
-$ echo 'create database test' | mysql -h $IP -proot 
+$ IP=`sudo docker inspect some-mysql | grep IPAddress | cut -f 4 -d "\"" ` # use the ouput of this command on the next command as $IP variable
+$ echo $IP # test it has some IP output
+$ echo 'create database test' | mysql -u root -h $IP -proot 
 ```
 
 ### Test the partition plugin is available

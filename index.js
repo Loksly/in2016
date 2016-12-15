@@ -27,8 +27,25 @@
 		return 'PARTITION BY ' + config.partition.type + ' (' + config.partition.fields.join(',') +') ' + config.partition.extraparameters;
 	}
 
+	function rebuild_primary_key(config){
+		let keyfields = config.fields.filter(function(f){ return config.primarykeys.indexOf(f) >=0; });
+		let transform = keyfields.map(function(field){ return 'MODIFY `' + field.name + '` ' + field.type; });
+
+		return 'ALTER TABLE `' + config.tablename + '` ' + transform.join(',') + ' DROP PRIMARY KEY, ADD PRIMARY KEY (' + config.primarykeys.concat(config.partition.fields).join(',') + ");\n";
+	}
+
+	function generatePartitionDefinition(config){
+		return 'ALTER TABLE `' + config.tablename + "` " + getPartitionInfo(config) + ";\n";
+	}
+
+	function regenerate_fields_with_extra(config){
+		let fieldswithextra = config.fields.filter(function(f){ return typeof f.extra !== 'undefined'; });
+
+		return fieldswithextra.length > 0 ? ('ALTER TABLE `' + config.tablename + '` ' + fieldswithextra.map(generateFieldDefinition).map(function(o){ return ' MODIFY ' + o;}).join(",\n") + ";\n" ) : '';
+	}
+
 	function generateAlterTable(config){
-		return 'ALTER TABLE `' + config.tablename + "` " + getPartitionInfo(config) + ';';
+		return rebuild_primary_key(config) + regenerate_fields_with_extra(config) + generatePartitionDefinition(config);
 	}
 
 	function createDDLFiles(config, directory){
@@ -115,7 +132,7 @@
 
 				return randomIntInc(min, max);
 			} else if (field.type.toUpperCase().indexOf('CHAR') >= 0){
-				return '\'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\'';
+				return '\'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore\'';
 			}
 			return '\'\'';
 		}).join(', ');
