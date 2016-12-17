@@ -32,7 +32,7 @@
 		let keyfields = config.fields.filter(function(f){ return config.primarykeys.indexOf(f) >=0; });
 		let transform = keyfields.map(function(field){ return 'MODIFY `' + field.name + '` ' + field.type; });
 
-		return 'ALTER TABLE `' + config.tablename + '` ' + transform.join(',') + ' DROP PRIMARY KEY, ADD PRIMARY KEY (' + config.partition.fields.concat(config.primarykeys).join(',') + ");\n";
+		return 'ALTER TABLE `' + config.tablename + '` ' + transform.join(',') + ' DROP PRIMARY KEY, ADD PRIMARY KEY (' + config.primarykeys.concat(config.partition.fields).join(',') + ");\n";
 	}
 
 	function generatePartitionDefinition(config){
