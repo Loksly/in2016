@@ -12,13 +12,15 @@ $ sudo docker pull mysql
 $ sudo docker run --name some-mysql -p=3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql:latest
 ```
 
+Or you may use the [./run-container.bash](run-container.bash) script.
+
 ### Test and create the _test_ database
 
 By unkown reasons in my tests the port is not right exported,
 then we must get the IP Address of the docker and assign it to _IP_ bash variable.
 
 ```bash
-$ IP=`sudo docker inspect some-mysql | grep IPAddress | top -n 1 | cut -f 4 -d "\"" ` # use the ouput of this command on the next command as $IP variable
+$ IP=`sudo docker inspect some-mysql | grep IPAddress | head -n 1 | cut -f 4 -d "\"" ` # use the ouput of this command on the next command as $IP variable
 $ echo $IP # test it has some IP output
 $ echo 'create database test' | mysql -u root -h $IP -proot 
 ```
