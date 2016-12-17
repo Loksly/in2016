@@ -16,13 +16,11 @@ Note that breaking the data accross different nodes of the same cluster is a com
 ### Why to break the table into partitions?
 
 Performance. When you choose to partition the data accross different files what you are trying to gain is performance.
-Each of the partition can behave or be storaged in [different filesystems](https://dev.mysql.com/doc/refman/5.7/en/symbolic-links.html),
+Each of the partitions can behave or be storaged in [different filesystems](https://dev.mysql.com/doc/refman/5.7/en/symbolic-links.html),
 follow different backup strategies for each file or have different subpartitions strategies so you may speedup some key queries.
-Note MySQL 5.7 supports explicit partition selection for queries using this syntax:
+For example you may want to store some of your *hot* data on a faster drive like *SSD* or *SAS* and some of your *cold* data on a slower drives.
+Here cold data means some data that is rarely searched for.
 
-```mysql
-SELECT * FROM t PARTITION (p0, p1) WHERE field < 0
-```
 
 You may also truncate a partition without affecting the others data in an almost instant time.
 This is usefull when some of your data gets useless from time to time. For example when you store
@@ -30,6 +28,12 @@ in different partitions different data that belongs to each day of the week or e
 and only the last year or the last week information is useful to you. Then just truncate the partition
 when it is no longer useful.
 
+
+MySQL 5.7 supports explicit partition selection for queries using this syntax:
+
+```mysql
+SELECT * FROM t PARTITION (p0, p1) WHERE field < 0
+```
 
 ### What kinds of partition are supported?
 
