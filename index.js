@@ -3,7 +3,8 @@
 
 	const path = require('path'),
 		fs = require('fs'),
-		zlib = require('zlib');
+		zlib = require('zlib'),
+		crypto = require('crypto');
 
 	let configFile, config, outputdir;
 
@@ -31,7 +32,7 @@
 		let keyfields = config.fields.filter(function(f){ return config.primarykeys.indexOf(f) >=0; });
 		let transform = keyfields.map(function(field){ return 'MODIFY `' + field.name + '` ' + field.type; });
 
-		return 'ALTER TABLE `' + config.tablename + '` ' + transform.join(',') + ' DROP PRIMARY KEY, ADD PRIMARY KEY (' + config.primarykeys.concat(config.partition.fields).join(',') + ");\n";
+		return 'ALTER TABLE `' + config.tablename + '` ' + transform.join(',') + ' DROP PRIMARY KEY, ADD PRIMARY KEY (' + config.partition.fields.concat(config.primarykeys).join(',') + ");\n";
 	}
 
 	function generatePartitionDefinition(config){
@@ -61,19 +62,23 @@
 		
 		let insertFilename = path.join(directory, config.dmlfiles.insert);
 		let stream = fs.createWriteStream(insertFilename, {flags: 'w'});
-		let remainingtimes = parseInt(config.inserts);
+		let remainingtimes = parseInt(config.inserts.count),
+			splitsize = parseInt(config.inserts.splitsize);
 
-		const gzip = zlib.createGzip();
+		let gzip = zlib.createGzip();
 		gzip.pipe(stream);
 
 		if (!remainingtimes || remainingtimes <= 0){
 			return;
 		}
 		let fields = config.fields.filter(function(f){ return config.primarykeys.indexOf(f.name) < 0; });
-		let sqlprefix = 'insert into `' + config.tablename + '` (`' + fields.map(function(f){ return f.name; }).join("`, `") + '`) values (';
+		let sqlprefix = 'insert into `' + config.tablename + '` (`' + fields.map(function(f){ return f.name; }).join("`, `") + '`) values ';
 		while (remainingtimes > 0){
-			gzip.write( createRandomRow(config, sqlprefix, fields) + ");\n");
-			remainingtimes--;
+			if (remainingtimes < splitsize){
+				splitsize = remainingtimes;
+			}
+			gzip.write( createRandomRows( config, sqlprefix, fields, splitsize) );
+			remainingtimes -= splitsize;
 		}
 		gzip.end();
 	}
@@ -118,24 +123,40 @@
 		});
 	}
 
-	function randomIntInc (low, high) {
-		return Math.floor(Math.random() * (high - low + 1) + low);
+	function randomIntInc(min, max) {       
+		// http://stackoverflow.com/a/18230432/1082061 credits belong to: http://stackoverflow.com/users/555632/arghbleargh
+		let byteArray = crypto.randomBytes(1);
+
+		let range = max - min + 1;
+		let max_range = 256;
+		if (byteArray[0] >= Math.floor(max_range / range) * range)
+			return randomIntInc(min, max);
+		return min + (byteArray[0] % range);
 	}
 
-	function createRandomRow(config, sqlprefix, fields){
-		return sqlprefix + fields.map(function(field){
+	function createRandomRows(config, sqlprefix, fields, count){
+		let rows = [];
+		while (count > 0){
+			rows.push( createRandomRow(config, fields) );
+			count--;
+		}
+		return sqlprefix + rows.join(',') + ";\n";
+	}
+
+	function createRandomRow(config, fields){
+		return '(' + fields.map(function(field){
 			if (field.type === 'FLOAT'){
 				return Math.random();
 			} else if (field.type === 'INT'){
 				let min = (typeof field.min === 'number') ? field.min : -Number.MAX_SAFE_INTEGER;
-				let max = (typeof field.max === 'number') ? field.min : Number.MAX_SAFE_INTEGER;
+				let max = (typeof field.max === 'number') ? field.max : Number.MAX_SAFE_INTEGER;
 
 				return randomIntInc(min, max);
 			} else if (field.type.toUpperCase().indexOf('CHAR') >= 0){
 				return '\'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore\'';
 			}
 			return '\'\'';
-		}).join(', ');
+		}).join(', ') + ')';
 	}
 
 

@@ -38,7 +38,10 @@
 		"fields": ["year"],
 		"extraparameters": "PARTITIONS 10"
 	},
-	"inserts": 100000,
+	"inserts": {
+		"count": 100000,
+		"splitsize": 100
+	},
 	"ddlfiles": {
 		"create": "create.sql",
 		"alter": "alter.sql"
