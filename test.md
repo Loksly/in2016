@@ -35,7 +35,7 @@ Hard way: [source](https://www.digitalocean.com/community/tutorials/how-to-measu
 sudo mysqlslap --user=root --password --host=$IP  --concurrency=20 --number-of-queries=1000 --create-schema=employees --query="output/query.sql" --delimiter=";" --verbose --iterations=2 --debug-info
 ```
 
-Or you may use the [./run-benchmark.bash](recreate-database.bash) script.
+Or you may use the [./run-benchmark.bash](run-benchmark.bash) script.
 
 
 Don't forget to turn off your container using the [./stop-container.bash](stop-container.bash) script.
