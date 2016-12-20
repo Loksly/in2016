@@ -90,7 +90,7 @@
 	function generateWhere(field){
 		if (field.type === 'INT'){
 			let min = (typeof field.min === 'number') ? field.min : -Number.MAX_SAFE_INTEGER;
-			let max = (typeof field.max === 'number') ? field.min : Number.MAX_SAFE_INTEGER;
+			let max = (typeof field.max === 'number') ? field.max : Number.MAX_SAFE_INTEGER;
 			return field.name + '=' + randomIntInc(min, max);
 		}
 		return '';

@@ -27,7 +27,7 @@ SELECT PARTITION_NAME, TABLE_ROWS FROM INFORMATION_SCHEMA.PARTITIONS WHERE TABLE
 
 Simple way:
 ```bash
-$ time mysql -h $IP --default-character-set=utf8 -proot test < output/query.sql
+$ time mysql -h $IP --default-character-set=utf8 -u root -proot test < output/query.sql
 ```
 
 Hard way: [source](https://www.digitalocean.com/community/tutorials/how-to-measure-mysql-query-performance-with-mysqlslap)
